@@ -1,0 +1,20 @@
+service: mega-metrics
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: prod
+  region: us-east-2
+
+functions:
+  cronFetchMetrics:
+    handler: metrics/app.fetchMetrics
+    timeout: 300
+    environment:
+      MEGA_METRICS_GH_TOKEN: ${ssm:/MEGA_METRICS_GH_TOKEN~true}
+      MAILER_PASS: ${ssm:/MAILER_PASS~true}
+    events:
+      - schedule: cron(0 17 * * ? *)
+
+plugins:
+  - serverless-offline
