@@ -5,10 +5,30 @@ const createCsvWriter = require('csv-writer').createObjectCsvWriter
 const nodemailer = require('nodemailer')
 const serverless = require('serverless-http')
 
+/**
+ * Constant that holds the GitHub token which is read out of the environment and is required for the GitHub-API.
+ */
 const GH_TOKEN = Object.freeze(process.env['MEGA_METRICS_GH_TOKEN'])
+
+/**
+ * Constant that holds the password which is read out of the environment and is required for 
+ * sending emails.
+ */
 const MAILER_PASS = Object.freeze(process.env['MAILER_PASS'])
+
+/**
+ * Constant that holds the directory where the generated file will be written to.
+ * Therefore, a check whether the application is running online or offline is performed.
+ * When the application is running online (on AWS), the file is written to the directory /tmp,
+ * which is a temporary directory provided by AWS and allows to write around 500 MB of data
+ * during the execution of the Lambda function. When the method is fully executed, 
+ * this temporary directory gets deleted on the server.
+ */
 const PATH_FOR_CSV = process.env.IS_OFFLINE ? 'tmp' : '/tmp'
 
+/**
+ * Constant that holds the current date.
+ */
 const DATE = new Date().toISOString().substr(0, 10);
 
 
