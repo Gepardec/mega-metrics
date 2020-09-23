@@ -12,7 +12,11 @@ functions:
     timeout: 300
     environment:
       MEGA_METRICS_GH_TOKEN: ${ssm:/MEGA_METRICS_GH_TOKEN~true}
+      MAILER_EMAIL: ${ssm:/MAILER_EMAIL~true}
       MAILER_PASS: ${ssm:/MAILER_PASS~true}
+      RECIPIENTS: ${ssm:/RECIPIENTS~true}
+      EMAIL_PROVIDER: gmail
+
     events:
       - schedule: cron(0 17 * * ? *)
 

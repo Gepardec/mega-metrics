@@ -8,20 +8,35 @@ const serverless = require('serverless-http')
 /**
  * Constant that holds the GitHub token which is read out of the environment and is required for the GitHub-API.
  */
-const GH_TOKEN = Object.freeze(process.env['MEGA_METRICS_GH_TOKEN'])
+const GH_TOKEN = process.env['MEGA_METRICS_GH_TOKEN']
 
 /**
- * Constant that holds the password which is read out of the environment and is required for 
+ * Constant that holds the password which is read out of the environment and is required for
  * sending emails.
  */
-const MAILER_PASS = Object.freeze(process.env['MAILER_PASS'])
+const MAILER_PASS = process.env['MAILER_PASS']
+
+/**
+ * The email of the sender
+ */
+const MAILER_EMAIL = process.env['MAILER_EMAIL'];
+
+/**
+ * The email(s) of the recipient(s) separated by a whitespace
+ */
+const RECIPIENTS = process.env['RECIPIENTS']
+
+/**
+ * The name of the service, e. g. gmail
+ */
+const EMAIL_PROVIDER = process.env['EMAIL_PROVIDER']
 
 /**
  * Constant that holds the directory where the generated file will be written to.
  * Therefore, a check whether the application is running online or offline is performed.
  * When the application is running online (on AWS), the file is written to the directory /tmp,
  * which is a temporary directory provided by AWS and allows to write around 500 MB of data
- * during the execution of the Lambda function. When the method is fully executed, 
+ * during the execution of the Lambda function. When the method is fully executed,
  * this temporary directory gets deleted on the server.
  */
 const PATH_FOR_CSV = process.env.IS_OFFLINE ? 'tmp' : '/tmp'
@@ -57,9 +72,9 @@ const csvWriter = createCsvWriter({
  * @type {Readonly<Mail>}
  */
 const transporter = Object.freeze(nodemailer.createTransport({
-    service: 'gmail',
+    service: EMAIL_PROVIDER,
     auth: {
-        user: 'oliver.tod@gepardec.com',
+        user: MAILER_EMAIL,
         pass: MAILER_PASS
     }
 }))
@@ -69,8 +84,8 @@ const transporter = Object.freeze(nodemailer.createTransport({
  * @type {Readonly<{attachments: {path: string}, subject: string, from: string, to: [string, string], text: string}>}
  */
 const mailOptions = Object.freeze({
-    from: 'oliver.tod@gepardec.com',
-    to: ['stefan.hausmann@gepardec.com', 'olivertod11@yahoo.de'],
+    from: MAILER_EMAIL,
+    to: RECIPIENTS.split(' '),
     subject: 'GitHub Metriken für MEGA',
     text: 'Hallo, \n\n Im Anhang findest du die Metriken von MEGA als CSV-Datei.\n\nLG',
     attachments: {
